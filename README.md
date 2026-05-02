@@ -18,3 +18,14 @@ This Project Generally Predicts The Stock Price In Real Time Using Machine Learn
 
 ### 📄 Details Page
 ![Details](images/Details.png)
+
+## 📊 Stock Prediction Results
+
+### 📈 AAPL Prediction
+![AAPL](static/charts/chart_AAPL.png)
+
+### 📈 GOOGL Prediction
+![GOOGL](static/charts/chart_GOOGL.png)
+
+### 📈 TSLA Prediction
+![TSLA](static/charts/chart_TSLA.png)
