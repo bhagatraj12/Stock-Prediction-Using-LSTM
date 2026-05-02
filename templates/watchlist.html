@@ -1,0 +1,42 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Watchlist - StockAI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Watchlist</h1>
+    <p>Save stocks you want to track and quickly predict.</p>
+</div>
+
+<!-- Add Stock Form -->
+<div class="glass-card" style="padding: 20px; margin-bottom: 24px;">
+    <form method="POST" action="{{ url_for('watchlist_add') }}" class="add-stock-form">
+        <input type="text" name="symbol" placeholder="Enter stock symbol (e.g. AAPL)" required>
+        <button type="submit" class="btn btn-primary">+ Add</button>
+    </form>
+</div>
+
+{% if items|length == 0 %}
+<div class="glass-card empty-state">
+    <p>Your watchlist is empty. Add some stocks to track!</p>
+</div>
+{% else %}
+<div class="watchlist-grid">
+    {% for w in items %}
+    <div class="glass-card watchlist-item">
+        <div class="watchlist-header">
+            <div>
+                <span class="stock-badge">{{ w.symbol }}</span>
+                <p class="text-muted" style="margin-top: 6px; font-size: 14px;">{{ w.company_name }}</p>
+            </div>
+            <a href="{{ url_for('watchlist_remove', symbol=w.symbol) }}" class="remove-btn" title="Remove">&times;</a>
+        </div>
+        <form method="POST" action="{{ url_for('dashboard') }}" class="watchlist-predict">
+            <input type="hidden" name="symbol" value="{{ w.symbol }}">
+            <button type="submit" class="btn btn-ghost btn-sm">Predict</button>
+        </form>
+        <span class="text-muted" style="font-size: 12px;">Added {{ w.added_at[:10] }}</span>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

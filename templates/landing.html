@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}StockAI - LSTM Stock Prediction{% endblock %}
+
+{% block body %}
+<div class="landing-page">
+    <!-- Background Blobs -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+
+    <!-- Navbar -->
+    <nav class="landing-nav">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span class="logo-icon">📈</span>
+                <span class="logo-text">Stock<span class="gradient-text">AI</span></span>
+            </a>
+            <div class="nav-buttons">
+                {% if session.user_id %}
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Dashboard</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-ghost">Login</a>
+                    <a href="{{ url_for('signup') }}" class="btn btn-primary">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-badge">🧠 Powered by LSTM Deep Learning</div>
+        <h1>Predict Stock Prices<br><span class="gradient-text">With AI Precision</span></h1>
+        <p class="hero-subtitle">
+            Our LSTM neural network analyzes the last 100 days of market data to forecast
+            next-day closing prices. Track predictions, build watchlists, and analyze performance.
+        </p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">Get Started →</a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline btn-lg">Login</a>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features-section">
+        <h2>Why Use Stock<span class="gradient-text">AI</span>?</h2>
+        <div class="features-grid">
+            <div class="feature-card glass-card">
+                <div class="feature-icon">📈</div>
+                <h3>LSTM Predictions</h3>
+                <p>Deep learning model trained on historical stock data to forecast next-day closing prices.</p>
+            </div>
+            <div class="feature-card glass-card">
+                <div class="feature-icon">📊</div>
+                <h3>Visual Charts</h3>
+                <p>Visualize 100-day price trends with prediction overlays and dark-themed charts.</p>
+            </div>
+            <div class="feature-card glass-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure Dashboard</h3>
+                <p>Personal dashboard with user accounts to track your predictions and watchlist.</p>
+            </div>
+            <div class="feature-card glass-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Real-Time Data</h3>
+                <p>Live stock data fetched from Yahoo Finance for accurate and up-to-date predictions.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        Minor Project &bull; Stock Price Prediction using LSTM &bull; Built for Academic Evaluation
+    </footer>
+</div>
+{% endblock %}

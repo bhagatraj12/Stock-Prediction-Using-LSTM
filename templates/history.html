@@ -1,0 +1,67 @@
+{% extends "dashboard_base.html" %}
+{% block title %}History - StockAI Terminal{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Analytics & History</h1>
+    <p>Review past predictions and AI performance.</p>
+</div>
+
+<!-- Search Filter -->
+<div class="glass-card" style="padding: 16px; margin-bottom: 24px;">
+    <input type="text" id="search-history" placeholder="Filter records by asset symbol..."
+           class="search-filter-input" oninput="filterTable()">
+</div>
+
+{% if predictions|length == 0 %}
+<div class="glass-card empty-state">
+    <p>No historical data found. Return to the Terminal to generate predictions.</p>
+</div>
+{% else %}
+<div class="table-card hover-lift">
+    <table class="data-table" id="history-table">
+        <thead>
+            <tr>
+                <th>Asset</th>
+                <th>Company Entity</th>
+                <th>Current Price</th>
+                <th>Target Price</th>
+                <th>Target Date</th>
+                <th>AI Sentiment</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in predictions %}
+            <tr>
+                <td><span class="stock-badge">{{ p.symbol }}</span></td>
+                <td class="text-muted">{{ p.company_name or '—' }}</td>
+                <td>${{ p.current_price }}</td>
+                <td><strong class="text-white">${{ p.predicted_price }}</strong></td>
+                <td class="text-muted">{{ p.prediction_date or '—' }}</td>
+                <td>
+                    {% if p.predicted_price >= p.current_price %}
+                        <span class="sentiment-tag bullish">▲ Bullish</span>
+                    {% else %}
+                        <span class="sentiment-tag bearish">▼ Bearish</span>
+                    {% endif %}
+                </td>
+                <td class="text-muted" style="font-size: 12px;">{{ p.created_at[:16] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<script>
+    function filterTable() {
+        var query = document.getElementById("search-history").value.toUpperCase();
+        var rows = document.querySelectorAll("#history-table tbody tr");
+        rows.forEach(function(row) {
+            var text = row.textContent.toUpperCase();
+            row.style.display = text.includes(query) ? "" : "none";
+        });
+    }
+</script>
+{% endblock %}

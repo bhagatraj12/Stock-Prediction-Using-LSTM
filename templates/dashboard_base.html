@@ -1,0 +1,139 @@
+<!-- This template is used for dashboard pages (sidebar + content) -->
+<!-- Other templates extend this instead of base.html directly -->
+{% extends "base.html" %}
+
+{% block body %}
+<div class="app-layout">
+    <!-- Background Blobs -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <!-- No icon for a cleaner look -->
+            <span class="logo-text">Stock<span class="gradient-text">AI</span></span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('dashboard') }}" class="nav-link {{ 'active' if request.endpoint == 'dashboard' }}">
+                Dashboard
+            </a>
+            <a href="{{ url_for('history') }}" class="nav-link {{ 'active' if request.endpoint == 'history' }}">
+                History
+            </a>
+            <a href="{{ url_for('analytics') }}" class="nav-link {{ 'active' if request.endpoint == 'analytics' }}">
+                Analytics
+            </a>
+            <a href="{{ url_for('watchlist') }}" class="nav-link {{ 'active' if request.endpoint == 'watchlist' }}">
+                Watchlist
+            </a>
+            <a href="{{ url_for('profile') }}" class="nav-link {{ 'active' if request.endpoint == 'profile' }}">
+                Profile
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="user-info">
+                <div class="user-avatar">{{ session.username[0]|upper }}</div>
+                <span class="user-name">{{ session.username }}</span>
+            </div>
+            <a href="{{ url_for('logout') }}" class="nav-link logout-link">
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header glass-card">
+            <div class="search-bar-container">
+                <form action="{{ url_for('dashboard') }}" method="POST" id="top-predict-form" class="top-search-form">
+                    <span class="search-icon">/</span>
+                    <input type="text" name="symbol" id="top-symbol-input" 
+                           placeholder="Search stocks, indices, pairs... (e.g. AAPL, TSLA)" 
+                           autocomplete="off" required>
+                    <div id="top-suggestions" class="suggestions-box"></div>
+                </form>
+            </div>
+            
+            <div class="header-actions">
+                <button class="icon-btn theme-toggle" title="Toggle Theme" id="theme-toggle">B/W</button>
+                <div class="notification-icon icon-btn" style="font-size: 14px; font-weight: 500;">
+                    <span>Alerts</span>
+                    <span class="notification-badge">3</span>
+                </div>
+                <div class="user-profile-menu">
+                    <div class="user-avatar-sm">{{ session.username[0]|upper if session.username else 'U' }}</div>
+                    <span class="header-username">{{ session.username }}</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</div>
+
+<!-- Autocomplete & Top Header JS -->
+<script>
+    // List of popular stocks for autocomplete suggestions
+    var globalStocks = [
+        {s: "AAPL", n: "Apple"}, {s: "MSFT", n: "Microsoft"},
+        {s: "GOOGL", n: "Google"}, {s: "AMZN", n: "Amazon"},
+        {s: "TSLA", n: "Tesla"}, {s: "META", n: "Meta"},
+        {s: "NVDA", n: "NVIDIA"}, {s: "NFLX", n: "Netflix"},
+        {s: "INFY", n: "Infosys"}, {s: "RELIANCE.NS", n: "Reliance"},
+        {s: "TCS.NS", n: "TCS"}, {s: "JPM", n: "JPMorgan"}
+    ];
+
+    var topInput = document.getElementById("top-symbol-input");
+    var topSugBox = document.getElementById("top-suggestions");
+
+    if(topInput && topSugBox) {
+        topInput.addEventListener("input", function() {
+            var query = this.value.toUpperCase();
+            topSugBox.innerHTML = "";
+            if (!query) { topSugBox.style.display = "none"; return; }
+
+            var matches = globalStocks.filter(function(s) {
+                return s.s.includes(query) || s.n.toUpperCase().includes(query);
+            });
+
+            if (matches.length === 0) { topSugBox.style.display = "none"; return; }
+            topSugBox.style.display = "block";
+
+            matches.forEach(function(stock) {
+                var div = document.createElement("div");
+                div.className = "suggestion-item";
+                div.innerHTML = "<strong>" + stock.s + "</strong> — " + stock.n;
+                div.onclick = function() {
+                    topInput.value = stock.s;
+                    topSugBox.style.display = "none";
+                    document.getElementById("top-predict-form").submit();
+                };
+                topSugBox.appendChild(div);
+            });
+        });
+
+        document.addEventListener("click", function(e) {
+            if (e.target !== topInput) topSugBox.style.display = "none";
+        });
+    }
+
+    // Theme toggle dummy function for visual completion
+    var themeToggle = document.getElementById("theme-toggle");
+    if(themeToggle) {
+        themeToggle.addEventListener("click", function() {
+            if(this.textContent === "☀️") {
+                this.textContent = "🌙";
+                // Add light mode classes if needed
+            } else {
+                this.textContent = "☀️";
+            }
+        });
+    }
+</script>
+{% endblock %}

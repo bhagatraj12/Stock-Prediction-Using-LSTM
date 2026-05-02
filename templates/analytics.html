@@ -1,0 +1,89 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Analytics - StockAI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Analytics</h1>
+    <p>Track your prediction activity and performance.</p>
+</div>
+
+<!-- Summary Cards -->
+<div class="metrics-grid three-col">
+    <div class="metric-card glass-card">
+        <span class="metric-label">Total Predictions</span>
+        <span class="metric-value accent">{{ total }}</span>
+    </div>
+    <div class="metric-card glass-card">
+        <span class="metric-label">Most Predicted Stock</span>
+        <span class="metric-value">{{ most_predicted.symbol if most_predicted else 'N/A' }}</span>
+    </div>
+    <div class="metric-card glass-card">
+        <span class="metric-label">Times Predicted</span>
+        <span class="metric-value">{{ most_predicted.count if most_predicted else 0 }}x</span>
+    </div>
+</div>
+
+<!-- Stock Breakdown Table -->
+{% if stock_breakdown|length > 0 %}
+<div class="table-card hover-lift">
+    <h3 class="section-title">Predictions Per Stock</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Stock</th>
+                <th>Predictions Made</th>
+                <th>Avg Predicted Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in stock_breakdown %}
+            <tr>
+                <td><span class="stock-badge-sm">{{ s.symbol }}</span></td>
+                <td>{{ s.count }}</td>
+                <td>${{ "%.2f"|format(s.avg_price) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- Recent Predictions -->
+{% if recent|length > 0 %}
+<div class="table-card hover-lift" style="margin-top: 24px;">
+    <h3 class="section-title">Recent Predictions</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Stock</th>
+                <th>Current</th>
+                <th>Predicted</th>
+                <th>For Date</th>
+                <th>Direction</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in recent %}
+            <tr>
+                <td><span class="stock-badge-sm">{{ p.symbol }}</span></td>
+                <td>${{ p.current_price }}</td>
+                <td><strong>${{ p.predicted_price }}</strong></td>
+                <td class="text-accent">{{ p.prediction_date or '—' }}</td>
+                <td>
+                    {% if p.predicted_price >= p.current_price %}
+                        <span class="sentiment-tag bullish">▲</span>
+                    {% else %}
+                        <span class="sentiment-tag bearish">▼</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="glass-card empty-state">
+    <p>No data yet. Make some predictions first!</p>
+</div>
+{% endif %}
+{% endblock %}

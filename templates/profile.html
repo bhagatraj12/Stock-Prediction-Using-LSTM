@@ -1,0 +1,35 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Profile - StockAI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Profile</h1>
+    <p>Your account details and usage stats.</p>
+</div>
+
+<!-- User Info -->
+<div class="glass-card profile-card">
+    <div class="profile-info">
+        <div class="profile-avatar">{{ session.username[0]|upper }}</div>
+        <div>
+            <h2>{{ session.username }}</h2>
+            <p class="text-muted">Member</p>
+        </div>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="metrics-grid two-col">
+    <div class="metric-card glass-card">
+        <span class="metric-label">Total Predictions Made</span>
+        <span class="metric-value accent">{{ total_predictions }}</span>
+    </div>
+    <div class="metric-card glass-card">
+        <span class="metric-label">Stocks in Watchlist</span>
+        <span class="metric-value" style="color: #fbbf24;">{{ watchlist_count }}</span>
+    </div>
+</div>
+
+<!-- Logout -->
+<a href="{{ url_for('logout') }}" class="btn btn-danger" style="margin-top: 24px;">Logout</a>
+{% endblock %}

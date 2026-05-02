@@ -1,0 +1,127 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Dashboard - StockAI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Dashboard</h1>
+    <p>Search for a stock and predict its next-day closing price.</p>
+</div>
+
+<!-- Global JS in dashboard_base.html handles the search now -->
+{% if not result %}
+<div class="empty-dashboard">
+    <div class="welcome-banner glass-card">
+        <h1>Welcome to StockAI Terminal</h1>
+        <p>Monitor the market, analyze trends, and get AI-powered next-day closing price predictions.</p>
+        
+        <div class="quick-picks mt-4">
+            <span class="quick-label">Trending Assets:</span>
+            <button type="button" onclick="topInput.value='AAPL'; document.getElementById('top-predict-form').submit();" class="quick-btn">AAPL</button>
+            <button type="button" onclick="topInput.value='GOOGL'; document.getElementById('top-predict-form').submit();" class="quick-btn">GOOGL</button>
+            <button type="button" onclick="topInput.value='MSFT'; document.getElementById('top-predict-form').submit();" class="quick-btn">MSFT</button>
+            <button type="button" onclick="topInput.value='TSLA'; document.getElementById('top-predict-form').submit();" class="quick-btn">TSLA</button>
+            <button type="button" onclick="topInput.value='AMZN'; document.getElementById('top-predict-form').submit();" class="quick-btn">AMZN</button>
+            <button type="button" onclick="topInput.value='NVDA'; document.getElementById('top-predict-form').submit();" class="quick-btn">NVDA</button>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if result %}
+<div class="dashboard-grid">
+    <!-- Left Column: Prediction & Info -->
+    <div class="dashboard-left">
+        {% set diff = result.predicted_price - result.current_price %}
+        {% set pct = ((diff / result.current_price) * 100) %}
+        {% set is_bullish = diff >= 0 %}
+        
+        <!-- Premium Prediction Card -->
+        <div class="terminal-card prediction-panel {{ 'glow-bulb' if is_bullish else 'glow-bear' }}">
+            <div class="terminal-header">
+                <div class="asset-info">
+                    <h2 class="asset-symbol">{{ symbol }}</h2>
+                    <span class="asset-name">{{ result.company_info.company_name }}</span>
+                </div>
+                <div class="sentiment-tag {{ 'bullish' if is_bullish else 'bearish' }}">
+                    {{ 'Bullish' if is_bullish else 'Bearish' }}
+                </div>
+            </div>
+            
+            <div class="prediction-main">
+                <span class="pred-label">AI PREDICTED PRICE</span>
+                <div class="price-display">
+                    <h1 class="big-price">${{ result.predicted_price }}</h1>
+                    <span class="price-change {{ 'green' if is_bullish else 'red' }}">
+                        {{ "%.2f"|format(pct|abs) }}%
+                    </span>
+                </div>
+                <div class="pred-footer">
+                    <span class="current-price-inline">Current: <strong>${{ result.current_price }}</strong></span>
+                    <span class="pred-date">Target Date: {{ result.prediction_date }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="metrics-grid">
+            {% set info = result.company_info %}
+            <div class="metric-card glass-card hover-lift">
+                <span class="metric-label">Current Price</span>
+                <span class="metric-value">${{ result.current_price }}</span>
+            </div>
+            <div class="metric-card glass-card hover-lift">
+                <span class="metric-label">Day High</span>
+                <span class="metric-value green">${{ info.day_high }}</span>
+            </div>
+            <div class="metric-card glass-card hover-lift">
+                <span class="metric-label">Day Low</span>
+                <span class="metric-value red">${{ info.day_low }}</span>
+            </div>
+            <div class="metric-card glass-card hover-lift">
+                <span class="metric-label">52W High</span>
+                <span class="metric-value green">${{ info.week_52_high }}</span>
+            </div>
+            <div class="metric-card glass-card hover-lift">
+                <span class="metric-label">52W Low</span>
+                <span class="metric-value red">${{ info.week_52_low }}</span>
+            </div>
+            <div class="metric-card glass-card hover-lift">
+                <span class="metric-label">Volume</span>
+                <span class="metric-value">{{ info.volume_display }}</span>
+            </div>
+            <div class="metric-card glass-card hover-lift">
+                <span class="metric-label">Market Cap</span>
+                <span class="metric-value">{{ info.market_cap_display }}</span>
+            </div>
+            <div class="metric-card glass-card hover-lift">
+                <span class="metric-label">50-Day Avg</span>
+                <span class="metric-value">${{ "%.2f"|format(info.fifty_day_avg) if info.fifty_day_avg != 'N/A' else 'N/A' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Chart area -->
+    <div class="dashboard-right">
+        <div class="terminal-card chart-panel">
+            <div class="panel-header">
+                <h3>Technical Analysis</h3>
+                <div class="chart-actions">
+                    <span class="indicator-badge">LSTM Model</span>
+                </div>
+            </div>
+            <div class="chart-container tv-style">
+                <img src="{{ url_for('static', filename='charts/chart_' + symbol + '.png') }}" alt="Stock Chart" class="chart-img">
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+    // Auto-dismiss toasts after 4 seconds
+    setTimeout(function() {
+        var toasts = document.querySelectorAll('.toast');
+        toasts.forEach(function(t) { t.remove(); });
+    }, 4000);
+</script>
+{% endblock %}
