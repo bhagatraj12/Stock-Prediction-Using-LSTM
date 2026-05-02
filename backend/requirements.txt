@@ -1,0 +1,15 @@
+# Backend Dependencies
+fastapi
+uvicorn
+sqlalchemy
+pyjwt
+bcrypt
+python-multipart
+
+# ML & Data
+tensorflow
+keras
+numpy
+pandas
+scikit-learn
+yfinance
