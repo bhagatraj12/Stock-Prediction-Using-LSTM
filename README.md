@@ -2,11 +2,19 @@
 This Project Generally Predicts The Stock Price In Real Time Using Machine Learning Algorithm LSTM(ANN) Long Short Term Memory 
 ## 📊 Stock Prediction Graphs
 
-### AAPL
-![AAPL](static/charts/chart_AAPL.png)
+## 🖥️ Application Screenshots
 
-### GOOGL
-![GOOGL](static/charts/chart_GOOGL.png)
+### 🏠 Front Page
+![Front Page](images/FrontPage.png)
 
-### TSLA
-![TSLA](static/charts/chart_TSLA.png)
+### 🔐 Login Page
+![Login](images/LoginPage.png)
+
+### 📊 Stock Prediction Dashboard
+![Prediction](images/StockPrediction.png)
+
+### 📈 Prediction Result
+![Result](images/StockPrediction01.png)
+
+### 📄 Details Page
+![Details](images/Details.png)
